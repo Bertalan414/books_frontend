@@ -1,5 +1,5 @@
 <script setup>
-import { GetBooks } from '../api/books';
+import { createBook, GetBooks } from '../api/books';
 </script>
 
 <script>
@@ -8,16 +8,29 @@ export default{
     data(){
         return{
             books:[],
-    };
+            newBook:{
+                title:"",
+                author:"",
+                year:2000,
+            }
+        };
     },
     mounted(){
         this.loadBooks()
-            
+
     },
     methods:{
         async loadBooks(){
             this.books=await GetBooks();
-        }
+        },
+        async addBook(book){
+            await createBook(book);
+            await this.loadBooks();
+        },
+        async submitCreateBook(){
+            await this.addBook(this.newBook);
+        },
+        
     }
 }
 </script>
@@ -25,6 +38,23 @@ export default{
 <template>
     <main class="">
         <h1 class="">Könyv kezelő rendszer</h1>
+
+        <form @submit.prevent="submitCreateBook()" class="border-2 border-stone-200 p-2 m-2 flex flex-col gap-4">
+            <div class="flex flex-col">
+                <label for="title" class="">title:</label>
+                <input v-model="newBook.title" type="text" class="border-2 border-stone-200 p-1" name="title">
+            </div>
+            <div class="flex flex-col">
+                <label for="author" class="">author:</label>
+                <input v-model="newBook.author" type="text" class="border-2 border-stone-200 p-1" name="author">
+            </div>
+            <div class="flex flex-col">
+                <label for="year" class="">Year:</label>
+                <input v-model="newBook.year" type="text" class="border-2 border-stone-200 p-1" name="year">
+            </div>
+
+            <button class="border-2 border-stone-200 p-2" type="submit">Létrehozás</button>
+        </form>
 
         <table>
             <thead>
